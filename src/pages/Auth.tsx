@@ -6,6 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Leaf } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+<<<<<<< HEAD
+=======
+import { submitKYC } from "@/api/kyc";
+
+>>>>>>> 409fee0 (initial commit with backend)
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -22,7 +27,11 @@ const Auth = () => {
       localStorage.setItem("userRole", "farmer");
       toast({
         title: "Login successful",
+<<<<<<< HEAD
         description: "Welcome back, Farmer!",
+=======
+        description: "Welcome back, Farmer!", 
+>>>>>>> 409fee0 (initial commit with backend)
       });
       navigate("/dashboard");
     } else if (email === "admin" && password === "admin123") {
@@ -83,6 +92,24 @@ const Auth = () => {
             <Button type="submit" className="w-full">
               Login
             </Button>
+<<<<<<< HEAD
+=======
+            <Button
+  type="button"
+  onClick={async () => {
+    const res = await submitKYC({
+      farmer_id: "abc1",
+      aadhaar_number: "1111-2222-3333",
+      pan_number: "AAAAA0000A",
+      address: "test village"
+    });
+    console.log(res);
+  }}
+>
+  TEST KYC POST
+</Button>
+
+>>>>>>> 409fee0 (initial commit with backend)
             <div className="text-sm text-muted-foreground text-center mt-4 p-3 bg-muted rounded-md space-y-3">
             
               <div className="text-left">

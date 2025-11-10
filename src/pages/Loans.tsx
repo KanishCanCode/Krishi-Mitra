@@ -157,7 +157,11 @@ const Loans = () => {
                     </div>
                     <div>
                       <h4 className="font-medium mb-1">Direct Disbursement</h4>
+<<<<<<< HEAD
                       <p className="text-sm text-muted-foreground">Funds sent directly to your digital wallet</p>
+=======
+                      <p className="text-sm text-muted-foreground">Funds sent directly to your bank account</p>
+>>>>>>> 409fee0 (initial commit with backend)
                     </div>
                   </div>
                 </CardContent>

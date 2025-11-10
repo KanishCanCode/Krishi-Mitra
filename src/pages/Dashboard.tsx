@@ -85,7 +85,11 @@ const Dashboard = () => {
                   <User className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle>Profile</CardTitle>
+<<<<<<< HEAD
                 <CardDescription>View and edit your KYC details, wallet address, and loan history</CardDescription>
+=======
+                <CardDescription>View and edit your KYC details  and loan history</CardDescription>
+>>>>>>> 409fee0 (initial commit with backend)
               </CardHeader>
               <CardContent>
                 <Button variant="outline" className="w-full">Manage Profile</Button>
