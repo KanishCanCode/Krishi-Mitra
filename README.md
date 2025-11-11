@@ -16,11 +16,11 @@
 
 ## Tech Stack
 
-* Frontend: 
-* Backend: 
-* Blockchain:
-* Database: 
-* Tools and Libraries: 
+* Frontend: ReactJS
+* Backend: NodeJS,Express
+* Blockchain:Tenderly(Virtual Blockchain), Solidity
+* Database: Postgres
+* Tools and Libraries: EthersJS
 
 ## Smart Contract Functionalities
 
