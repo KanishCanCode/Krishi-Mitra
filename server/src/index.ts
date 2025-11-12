@@ -13,6 +13,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
+
+
+    // <= must be before routes
+
 app.get("/", (req, res) => {
   res.send("Server running ✅");
 });
@@ -25,3 +29,9 @@ app.use("/kyc", requireAuth(["farmer"]), kycRouter);
 app.use("/loan", requireAuth(["farmer"]), loanRoute);
 
 app.listen(3001, () => console.log("Server running on 3001"));
+app.use("/api/kyc", kycRouter);
+
+
+app.listen(3001, () => {
+  console.log("Server running on port 3001");
+});

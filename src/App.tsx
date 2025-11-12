@@ -13,7 +13,7 @@ import Loans from "./pages/Loans";
 import Reports from "./pages/Reports";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
-
+import Register from "./pages/Register"
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -32,6 +32,8 @@ const App = () => (
           <Route path="/loans" element={<Loans />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/register" element={<Register />} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
