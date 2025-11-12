@@ -14,6 +14,10 @@ model Farmer {
   Bank_account_no   String?
   loan_history      String?
   kyc_verified      Boolean  @default(false)
+  email             String   @unique
+  passwordHash      String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   applications   Loan_Application[]
   kycDetails     KYC_Details?
@@ -23,6 +27,13 @@ model Farmer {
 model Lender {
   lender_id          String   @id @default(cuid())
   name               String
+  Bank_account_no    String?
+  total_funded_loans Int      @default(0)
+  email              String   @unique
+  passwordHash       String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
   Bank_acoount_no    String?
   total_funded_loans Int      @default(0)
 
@@ -31,6 +42,15 @@ model Lender {
 }
 
 model Loan_Application {
+  application_id     String   @id @default(cuid())
+  farmer_id          String
+  lender_id          String?
+  amount             Decimal
+  tenure_months      Int
+  purpose            String
+  status             String
+  application_date   DateTime @default(now())
+  blockchain_hash    String?
   application_id String   @id @default(cuid())
   farmer_id      String
   lender_id      String?

@@ -1,5 +1,7 @@
-node_modules
-<<<<<<< HEAD
-=======
-*.env
->>>>>>> 409fee0 (initial commit with backend)
+.DS_Store
+node_modules/
+.env
+dist/
+build/
+.vscode/
+*.log

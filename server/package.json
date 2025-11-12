@@ -8,13 +8,21 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "prisma": "^6.19.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3",
     "express": "^4.19.2",
     "cors": "^2.8.5",
     "@prisma/client": "^6.19.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.8.3",
-    "ts-node-dev": "^2.0.0",
-    "prisma": "^6.19.0"
   }
+  
 }

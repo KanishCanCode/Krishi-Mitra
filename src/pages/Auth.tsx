@@ -6,46 +6,55 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Leaf } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-<<<<<<< HEAD
-=======
-import { submitKYC } from "@/api/kyc";
-
->>>>>>> 409fee0 (initial commit with backend)
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("farmer"); // Dropdown for user role
+
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Hardcoded credentials
-    if (email === "farmer" && password === "farmer123") {
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userRole", "farmer");
-      toast({
-        title: "Login successful",
-<<<<<<< HEAD
-        description: "Welcome back, Farmer!",
-=======
-        description: "Welcome back, Farmer!", 
->>>>>>> 409fee0 (initial commit with backend)
+
+    try {
+      const res = await fetch(`/auth/${role}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
-      navigate("/dashboard");
-    } else if (email === "admin" && password === "admin123") {
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userRole", "admin");
+
+      const data = await res.json();
+
+      if (!data.success) {
+        toast({
+          title: "Login Failed",
+          description: data.error || "Invalid credentials",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Save credentials
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userRole", role);
+      localStorage.setItem("kycVerified", data.farmer?.kyc_verified || "false");
+      localStorage.setItem("farmer_id", data.farmer?.farmer_id || "");
+
       toast({
-        title: "Login successful",
-        description: "Welcome back, Admin!",
+        title: "Login successful 🎉",
+        description: `Welcome back, ${data.farmer?.name || role}!`,
       });
-      navigate("/admin");
-    } else {
+
+      // Redirect
+      if (role === "farmer") navigate("/dashboard");
+      else navigate("/lender-dashboard");
+    } catch (err) {
+      console.error(err);
       toast({
-        title: "Login failed",
-        description: "Invalid credentials. Check demo credentials below.",
+        title: "Server Error",
+        description: "Unable to reach backend server",
         variant: "destructive",
       });
     }
@@ -54,67 +63,71 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-4 text-center">
+        <CardHeader className="text-center space-y-4">
           <div className="flex justify-center">
             <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
               <Leaf className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <div>
-            <CardTitle className="text-2xl">Welcome back</CardTitle>
-            <CardDescription>Login to access your loan dashboard</CardDescription>
-          </div>
+          <CardTitle className="text-2xl font-semibold">Welcome back</CardTitle>
+          <CardDescription>Login to your Krishi Mitra account</CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
+            {/* Role dropdown */}
             <div className="space-y-2">
-              <Label htmlFor="email">Username</Label>
+              <Label>Role</Label>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="border p-2 rounded w-full"
+              >
+                <option value="farmer">Farmer</option>
+                <option value="lender">Lender</option>
+              </select>
+            </div>
+
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="text"
-                placeholder="farmer"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
+
+            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
+
+            {/* Login Button */}
             <Button type="submit" className="w-full">
               Login
             </Button>
-<<<<<<< HEAD
-=======
-            <Button
-  type="button"
-  onClick={async () => {
-    const res = await submitKYC({
-      farmer_id: "abc1",
-      aadhaar_number: "1111-2222-3333",
-      pan_number: "AAAAA0000A",
-      address: "test village"
-    });
-    console.log(res);
-  }}
->
-  TEST KYC POST
-</Button>
 
->>>>>>> 409fee0 (initial commit with backend)
-            <div className="text-sm text-muted-foreground text-center mt-4 p-3 bg-muted rounded-md space-y-3">
-            
-              <div className="text-left">
-              </div>
-            </div>
+            {/* New Register Button */}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate("/register")}
+            >
+              New here? Register
+            </Button>
           </form>
         </CardContent>
       </Card>
