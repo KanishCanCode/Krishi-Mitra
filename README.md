@@ -16,9 +16,9 @@
 
 ## Tech Stack
 
-* Frontend: ReactJS
+* Frontend: ReactJS,Typescript
 * Backend: NodeJS,Express
-* Blockchain:Tenderly(Virtual Blockchain), Solidity
+* Blockchain:Sepolia, Solidity
 * Database: Postgres
 * Tools and Libraries: EthersJS
 
@@ -50,10 +50,9 @@
 
 ## Team Members
 
-* Kanish Patidar
 * Jagrit Chaudhary
 * Jyotsana Rani
 * Kajal Rajput
-   
+* Kanish Patidar   
 
 
