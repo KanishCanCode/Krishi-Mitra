@@ -8,9 +8,13 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+
+  // NEW AUTH LOGIC (based on your Auth.tsx)
+  const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("userRole");
-  
+  const isAuthenticated = Boolean(token);
+
+  // NAV ITEMS
   const userNavItems = [
     { name: "Home", path: "/" },
     { name: "Dashboard", path: "/dashboard", protected: true, roles: ["farmer"] },
@@ -27,33 +31,44 @@ const Header = () => {
 
   const navItems = userRole === "admin" ? adminNavItems : userNavItems;
 
+  // LOGOUT UPDATED
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("token");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("kycVerified");
+    localStorage.removeItem("farmer_id");
+
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
-    navigate("/");
+
+    navigate("/auth");
   };
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <Leaf className="h-6 w-6 text-primary" />
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Krishi Mitra
-            </span>
-          </Link>
+
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 font-bold text-xl">
+          <Leaf className="h-6 w-6 text-primary" />
+          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Krishi Mitra
+          </span>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
           {navItems.map((item) => {
+            // Protected check
             if (item.protected && !isAuthenticated) return null;
+
+            // Role check
             if (item.roles && !item.roles.includes(userRole || "")) return null;
+
             return (
               <Link
                 key={item.path}
@@ -68,17 +83,22 @@ const Header = () => {
           })}
         </nav>
 
+        {/* Right-side buttons */}
         <div className="hidden md:flex items-center gap-4">
-          {isAuthenticated ? (
+          {!isAuthenticated ? (
+            <>
+              <Button variant="outline" onClick={() => navigate("/auth")}>
+                Login
+              </Button>
+              <Button onClick={() => navigate("/auth")}>
+                Get Started
+              </Button>
+            </>
+          ) : (
             <Button variant="outline" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               Logout
             </Button>
-          ) : (
-            <>
-              <Button variant="outline" onClick={() => navigate("/auth")}>Login</Button>
-              <Button onClick={() => navigate("/auth")}>Get Started</Button>
-            </>
           )}
         </div>
 
@@ -94,6 +114,7 @@ const Header = () => {
               {navItems.map((item) => {
                 if (item.protected && !isAuthenticated) return null;
                 if (item.roles && !item.roles.includes(userRole || "")) return null;
+
                 return (
                   <Link
                     key={item.path}
@@ -106,17 +127,22 @@ const Header = () => {
                   </Link>
                 );
               })}
+
               <div className="flex flex-col gap-2 mt-4">
-                {isAuthenticated ? (
+                {!isAuthenticated ? (
+                  <>
+                    <Button variant="outline" onClick={() => navigate("/auth")}>
+                      Login
+                    </Button>
+                    <Button onClick={() => navigate("/auth")}>
+                      Get Started
+                    </Button>
+                  </>
+                ) : (
                   <Button variant="outline" onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
                   </Button>
-                ) : (
-                  <>
-                    <Button variant="outline" onClick={() => navigate("/auth")}>Login</Button>
-                    <Button onClick={() => navigate("/auth")}>Get Started</Button>
-                  </>
                 )}
               </div>
             </nav>

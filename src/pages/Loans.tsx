@@ -1,194 +1,133 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Wallet, Clock, FileText } from "lucide-react";
+
+const statusColors: any = {
+  pending: "bg-yellow-100 text-yellow-800",
+  approved: "bg-blue-100 text-blue-800",
+  rejected: "bg-red-100 text-red-800",
+  active: "bg-green-100 text-green-800",
+  completed: "bg-gray-100 text-gray-800",
+};
 
 const Loans = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("userRole");
 
+  const [loans, setLoans] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // PROTECT ROUTE
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-    const userRole = localStorage.getItem("userRole");
-    
-    if (!isAuthenticated || userRole !== "farmer") {
-      navigate("/auth");
+    if (!token || role !== "farmer") {
+      navigate("/auth", { replace: true });
+      return;
     }
-  }, [navigate]);
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    amount: "",
-    tenure: "",
-    purpose: "",
-  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Application Submitted!",
-      description: "Your loan application has been submitted to the blockchain for review.",
-    });
-    setFormData({ amount: "", tenure: "", purpose: "" });
+    fetchLoans();
+  }, []);
+
+  const fetchLoans = async () => {
+    try {
+      const res = await fetch("/loan/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setLoans(data.loans);
+      }
+    } catch (err) {
+      console.error("Error fetching loans:", err);
+    }
+
+    setLoading(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen gap-2 text-lg">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        Loading loans...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Loan Application</h1>
-            <p className="text-muted-foreground">Apply for a micro loan with transparent blockchain processing</p>
-          </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Application Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>New Loan Application</CardTitle>
-                <CardDescription>Fill in the details to submit your loan request</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="amount">Loan Amount (₹)</Label>
-                    <Input
-                      id="amount"
-                      name="amount"
-                      type="number"
-                      placeholder="Enter amount"
-                      value={formData.amount}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
+      <main className="flex-1 container mx-auto px-4 py-10">
+        <h1 className="text-3xl font-bold mb-6">Your Loan Applications</h1>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="tenure">Tenure (months)</Label>
-                    <Input
-                      id="tenure"
-                      name="tenure"
-                      type="number"
-                      placeholder="Enter tenure in months"
-                      value={formData.tenure}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="purpose">Purpose</Label>
-                    <Textarea
-                      id="purpose"
-                      name="purpose"
-                      placeholder="Describe the purpose of the loan (e.g., seed purchase, fertilizer, equipment)"
-                      value={formData.purpose}
-                      onChange={handleChange}
-                      required
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="collateral">Collateral Documents (Optional)</Label>
-                    <Input id="collateral" type="file" />
-                    <p className="text-xs text-muted-foreground">Upload land records or other collateral documents</p>
-                  </div>
-
-                  <Button type="submit" className="w-full">Submit Application</Button>
-                </form>
-              </CardContent>
-            </Card>
-
-            {/* Information */}
-            <div className="space-y-6">
-              <Card>
+        {loans.length === 0 ? (
+          <Card className="p-8 text-center">
+            <p className="text-muted-foreground">You have not applied for any loans yet.</p>
+            <button
+              onClick={() => navigate("/apply-loan")}
+              className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Apply for Loan
+            </button>
+          </Card>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {loans.map((loan: any) => (
+              <Card
+                key={loan.application_id}
+                className="hover:shadow-lg transition-all rounded-xl border border-gray-200"
+              >
                 <CardHeader>
-                  <CardTitle>How It Works</CardTitle>
+                  <CardTitle className="flex justify-between items-center">
+                    <span className="text-xl font-bold">₹{loan.amount}</span>
+                    <Badge
+                      className={
+                        statusColors[loan.status] ||
+                        "bg-gray-200 text-gray-800"
+                      }
+                    >
+                      {loan.status.toUpperCase()}
+                    </Badge>
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex gap-3">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold flex-shrink-0">
-                      1
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-1">Submit Application</h4>
-                      <p className="text-sm text-muted-foreground">Fill in loan details and submit to the blockchain</p>
-                    </div>
+
+                <CardContent className="space-y-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <p><strong>Purpose:</strong> {loan.purpose}</p>
                   </div>
 
-                  <div className="flex gap-3">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold flex-shrink-0">
-                      2
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-1">Smart Contract Review</h4>
-                      <p className="text-sm text-muted-foreground">Automated verification and lender matching</p>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <p><strong>Tenure:</strong> {loan.tenure_months} months</p>
                   </div>
 
-                  <div className="flex gap-3">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold flex-shrink-0">
-                      3
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-1">Instant Approval</h4>
-                      <p className="text-sm text-muted-foreground">Get notified within minutes of approval</p>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Wallet className="h-4 w-4 text-muted-foreground" />
+                    <p>
+                      <strong>Applied:</strong>{" "}
+                      {new Date(loan.application_date).toLocaleDateString()}
+                    </p>
                   </div>
 
-                  <div className="flex gap-3">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold flex-shrink-0">
-                      4
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-1">Direct Disbursement</h4>
-                      <p className="text-sm text-muted-foreground">Funds sent directly to your bank account</p>
-                    </div>
-                  </div>
+                  <button
+                    onClick={() => navigate(`/loan/${loan.application_id}`)}
+                    className="mt-4 w-full px-4 py-2 border rounded-lg hover:bg-gray-100"
+                  >
+                    View Details
+                  </button>
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Loan Terms</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Interest Rate</span>
-                    <span className="font-medium">8-12% per annum</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Processing Fee</span>
-                    <span className="font-medium">1% of loan amount</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Max Loan Amount</span>
-                    <span className="font-medium">₹50,000</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Max Tenure</span>
-                    <span className="font-medium">24 months</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            ))}
           </div>
-        </div>
+        )}
       </main>
 
       <Footer />

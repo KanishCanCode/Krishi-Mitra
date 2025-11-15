@@ -8,65 +8,54 @@ datasource db {
 }
 
 model Farmer {
-  farmer_id         String   @id @default(cuid())
-  name              String
-  location          String?
-  Bank_account_no   String?
-  loan_history      String?
-  kyc_verified      Boolean  @default(false)
-  email             String   @unique
-  passwordHash      String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  applications   Loan_Application[]
-  kycDetails     KYC_Details?
-  repayments     Repayment[]
+  farmer_id     String             @id @default(cuid())
+  name          String
+  location      String?
+  loan_history  String?
+  kyc_verified  Boolean            @default(false)
+  createdAt     DateTime           @default(now())
+  email         String             @unique
+  passwordHash  String
+  updatedAt     DateTime           @updatedAt
+  aadhar_number String?
+  pan_number    String?
+  bank_account  String?
+  kycDetails    KYC_Details?
+  applications  Loan_Application[]
+  repayments    Repayment[]
 }
 
 model Lender {
-  lender_id          String   @id @default(cuid())
+  lender_id          String             @id @default(cuid())
   name               String
+  total_funded_loans Int                @default(0)
   Bank_account_no    String?
-  total_funded_loans Int      @default(0)
-  email              String   @unique
+  createdAt          DateTime           @default(now())
+  email              String             @unique
   passwordHash       String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-
-  Bank_acoount_no    String?
-  total_funded_loans Int      @default(0)
-
-  applications Loan_Application[]
-  disbursements Disbursement[]
+  updatedAt          DateTime           @updatedAt
+  disbursements      Disbursement[]
+  applications       Loan_Application[]
 }
 
 model Loan_Application {
-  application_id     String   @id @default(cuid())
-  farmer_id          String
-  lender_id          String?
-  amount             Decimal
-  tenure_months      Int
-  purpose            String
-  status             String
-  application_date   DateTime @default(now())
-  blockchain_hash    String?
-  application_id String   @id @default(cuid())
-  farmer_id      String
-  lender_id      String?
-  amount         Decimal
-  tenure_months  Int
-  purpose        String
-  status         String
-  application_date DateTime @default(now())
-  blockchain_hash String?
-
-  farmer        Farmer        @relation(fields: [farmer_id], references: [farmer_id])
-  lender        Lender?       @relation(fields: [lender_id], references: [lender_id])
-
-  collateralDocs Collateral_Document[]
-  repayments     Repayment[]
-  disbursements  Disbursement[]
+  application_id   String                @id @default(cuid())
+  farmer_id        String
+  lender_id        String?
+  amount           Decimal
+  tenure_months    Int
+  purpose          String
+  status           String
+  application_date DateTime              @default(now())
+  blockchain_hash  String?
+  due_date         DateTime?
+  interest_rate    Float?
+  rejection_reason String?
+  collateralDocs   Collateral_Document[]
+  disbursements    Disbursement[]
+  farmer           Farmer                @relation(fields: [farmer_id], references: [farmer_id])
+  lender           Lender?               @relation(fields: [lender_id], references: [lender_id])
+  repayments       Repayment[]
 }
 
 model KYC_Details {
@@ -76,42 +65,38 @@ model KYC_Details {
   verification_date   DateTime?
   identity_documents  String?
   kyc_hash            String?
-
-  farmer Farmer @relation(fields: [farmer_id], references: [farmer_id])
+  farmer              Farmer    @relation(fields: [farmer_id], references: [farmer_id])
 }
 
 model Collateral_Document {
-  document_id   String   @id @default(cuid())
+  document_id    String           @id @default(cuid())
   application_id String
   document_type  String
   file_path      String?
-  upload_date    DateTime @default(now())
-
-  application Loan_Application @relation(fields: [application_id], references: [application_id])
+  upload_date    DateTime         @default(now())
+  application    Loan_Application @relation(fields: [application_id], references: [application_id])
 }
 
 model Repayment {
-  repayment_id   String   @id @default(cuid())
-  application_id String
-  farmer_id      String
-  amount         Decimal
-  repayment_date  DateTime @default(now())
+  repayment_id     String           @id @default(cuid())
+  application_id   String
+  farmer_id        String
+  amount           Decimal
+  repayment_date   DateTime         @default(now())
   transaction_hash String?
-  payment_type    String?
-
-  application Loan_Application @relation(fields: [application_id], references: [application_id])
-  farmer      Farmer @relation(fields: [farmer_id], references: [farmer_id])
+  payment_type     String?
+  application      Loan_Application @relation(fields: [application_id], references: [application_id])
+  farmer           Farmer           @relation(fields: [farmer_id], references: [farmer_id])
 }
 
 model Disbursement {
-  disbursement_id  String   @id @default(cuid())
-  application_id   String
-  lender_id        String
-  amount           Decimal
-  disbursement_date DateTime @default(now())
-  transaction_hash String?
-  status           String
-
-  application Loan_Application @relation(fields: [application_id], references: [application_id])
-  lender      Lender @relation(fields: [lender_id], references: [lender_id])
+  disbursement_id   String           @id @default(cuid())
+  application_id    String
+  lender_id         String
+  amount            Decimal
+  disbursement_date DateTime         @default(now())
+  transaction_hash  String?
+  status            String
+  application       Loan_Application @relation(fields: [application_id], references: [application_id])
+  lender            Lender           @relation(fields: [lender_id], references: [lender_id])
 }

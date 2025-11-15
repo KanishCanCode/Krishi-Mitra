@@ -5,32 +5,45 @@ import { Button } from "@/components/ui/button";
 import { Wallet, TrendingUp, Clock, CheckCircle, User, FileText } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useBackToHome } from "@/hooks/useBackToHome";
 
-const Dashboard = () => {
+const FarmerDashboard = () => {
   const navigate = useNavigate();
 
+  // 🔥 Disable browser back button (goes HOME)
+  useBackToHome();
+
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-    const userRole = localStorage.getItem("userRole");
-    
-    if (!isAuthenticated || userRole !== "farmer") {
-      navigate("/auth");
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("userRole");
+
+    // 1️⃣ Not logged in → redirect to login
+    if (!token || !role) {
+      navigate("/auth", { replace: true });
+      return;
+    }
+
+    // 2️⃣ Logged in but not farmer → restrict
+    if (role !== "farmer") {
+      navigate("/auth", { replace: true });
+      return;
     }
   }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="space-y-8">
-          {/* Header */}
+          
+          {/* PAGE TITLE */}
           <div>
             <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
             <p className="text-muted-foreground">Manage your loans and profile</p>
           </div>
 
-          {/* Stats Grid */}
+          {/* QUICK STATS */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -77,49 +90,67 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          {/* Quick Actions */}
+          {/* QUICK ACTIONS */}
           <div className="grid md:grid-cols-3 gap-6">
+            
+            {/* Profile */}
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                   <User className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle>Profile</CardTitle>
-                <CardDescription>View and edit your KYC details  and loan history</CardDescription>
+                <CardDescription>View and edit your KYC details & loan history</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full">Manage Profile</Button>
+                <Button variant="outline" className="w-full">
+                  Manage Profile
+                </Button>
               </CardContent>
             </Card>
 
+            {/* APPLY FOR LOAN */}
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-secondary/10 flex items-center justify-center mb-4">
                   <FileText className="h-6 w-6 text-secondary" />
                 </div>
                 <CardTitle>Apply for Loan</CardTitle>
-                <CardDescription>Submit a new loan application with amount, tenure, and purpose</CardDescription>
+                <CardDescription>Submit a new loan application</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full">New Application</Button>
+                <Button
+                  className="w-full"
+                  onClick={() => navigate("/apply-loan")} 
+                >
+                  New Application
+                </Button>
               </CardContent>
             </Card>
 
+            {/* Reports */}
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
                   <TrendingUp className="h-6 w-6 text-accent" />
                 </div>
                 <CardTitle>Reports</CardTitle>
-                <CardDescription>View detailed reports and statistics about your loan portfolio</CardDescription>
+                <CardDescription>View loan portfolio analytics</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full">View Reports</Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => navigate("/reports")}  // ✅ Reports works now
+                >
+                  View Reports
+                </Button>
               </CardContent>
             </Card>
+
           </div>
 
-          {/* Recent Activity */}
+          {/* Recent Loan Activity */}
           <Card>
             <CardHeader>
               <CardTitle>Recent Loans</CardTitle>
@@ -127,12 +158,13 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
+                {/* Dummy recent loans — replace with real data later */}
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="space-y-1">
                     <p className="font-medium">Crop Fertilizer Purchase</p>
-                    <p className="text-sm text-muted-foreground">Loan #1234 • Applied on Jan 15, 2025</p>
+                    <p className="text-sm text-muted-foreground">Loan #1234 • Jan 15, 2025</p>
                   </div>
-                  <div className="text-right space-y-1">
+                  <div className="text-right">
                     <p className="font-bold text-primary">₹15,000</p>
                     <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                       Active
@@ -143,18 +175,20 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="space-y-1">
                     <p className="font-medium">Seed Purchase</p>
-                    <p className="text-sm text-muted-foreground">Loan #1233 • Applied on Dec 10, 2024</p>
+                    <p className="text-sm text-muted-foreground">Loan #1233 • Dec 10, 2024</p>
                   </div>
-                  <div className="text-right space-y-1">
+                  <div className="text-right">
                     <p className="font-bold text-primary">₹10,000</p>
                     <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
                       Approved
                     </span>
                   </div>
                 </div>
+
               </div>
             </CardContent>
           </Card>
+
         </div>
       </main>
 
@@ -163,4 +197,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default FarmerDashboard;
