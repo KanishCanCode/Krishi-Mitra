@@ -72,7 +72,7 @@ model Collateral_Document {
   document_id    String           @id @default(cuid())
   application_id String
   document_type  String
-  file_path      String?
+  
   upload_date    DateTime         @default(now())
   application    Loan_Application @relation(fields: [application_id], references: [application_id])
 }
