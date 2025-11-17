@@ -37,6 +37,27 @@ router.post("/apply", requireAuth(["farmer"]), async (req, res) => {
         blockchain_hash: "",
       },
     });
+    // 🔥 AUTO-ADD COLLATERAL DOCUMENT
+const kyc = await prisma.kYC_Details.findUnique({
+  where: { farmer_id },
+});
+
+if (kyc) {
+  let documentType = null;
+
+  // choose based on farmer table
+  if (farmer.pan_number) documentType = "pan";
+  else if (farmer.aadhar_number) documentType = "aadhar";
+
+  await prisma.collateral_Document.create({
+    data: {
+      // insert kyc_id as document_id
+      document_id: kyc.kyc_id,
+      application_id: loan.application_id,
+      document_type: documentType || "unknown",
+    },
+  });
+}
 
     return res.json({ success: true, loan });
 
