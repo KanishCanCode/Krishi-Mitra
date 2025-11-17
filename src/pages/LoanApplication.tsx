@@ -16,6 +16,9 @@ const LoanApplication = () => {
   const role = localStorage.getItem("userRole");
   const kycVerified = localStorage.getItem("kycVerified") === "true";
 
+  const [lenders, setLenders] = useState<any[]>([]);
+  const [loadingLenders, setLoadingLenders] = useState(true);
+
   const [form, setForm] = useState({
     lender_id: "",
     amount: "",
@@ -23,31 +26,70 @@ const LoanApplication = () => {
     purpose: "",
   });
 
-  // Protect Route
+  /* ---------------------------
+     PROTECT ROUTE
+  ----------------------------*/
   useEffect(() => {
     if (!token || role !== "farmer") {
       navigate("/auth", { replace: true });
       return;
     }
+
     if (!kycVerified) {
       toast({
         title: "KYC Required",
-        description: "Complete KYC before applying for loans.",
+        description: "Complete KYC before applying for a loan.",
         variant: "destructive",
       });
       navigate("/farmer/kyc", { replace: true });
+      return;
     }
+
+    fetchLenders();
   }, []);
 
-  const handleChange = (e) => {
+  /* ---------------------------
+     FETCH LENDERS (FROM BACKEND)
+  ----------------------------*/
+  const fetchLenders = async () => {
+    try {
+      const res = await fetch("/lender/list", {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setLenders(data.lenders);
+      }
+    } catch (error) {
+      console.error("Error loading lenders", error);
+    }
+
+    setLoadingLenders(false);
+  };
+
+  const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  /* ---------------------------
+     SUBMIT APPLICATION
+  ----------------------------*/
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     const amountNum = Number(form.amount);
     const tenureNum = Number(form.tenure_months);
+
+    if (!form.lender_id) {
+      toast({
+        title: "Missing Lender",
+        description: "Please select a lender.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (amountNum <= 0) {
       toast({
@@ -99,7 +141,6 @@ const LoanApplication = () => {
       });
 
       navigate("/dashboard", { replace: true });
-
     } catch (err) {
       toast({
         title: "Server Error",
@@ -114,26 +155,46 @@ const LoanApplication = () => {
       <Header />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        <Card className="max-w-xl mx-auto">
+        <Card className="max-w-xl mx-auto shadow-md">
           <CardHeader>
-            <CardTitle>New Loan Application</CardTitle>
+            <CardTitle className="text-2xl font-semibold">
+              New Loan Application
+            </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className="space-y-5" onSubmit={handleSubmit}>
 
-              <div>
-                <Label>Lender ID</Label>
-                <Input
+              {/* ---------------------
+                   LENDER DROPDOWN
+              ----------------------*/}
+              <div className="space-y-1">
+                <Label>Select Lender</Label>
+                <select
                   name="lender_id"
                   value={form.lender_id}
                   onChange={handleChange}
                   required
-                  placeholder="Enter lender_id"
-                />
+                  className="w-full mt-1 border rounded-md p-3 bg-white focus:ring-2 focus:ring-primary"
+                >
+                  <option value="">-- Select Lender --</option>
+
+                  {loadingLenders ? (
+                    <option>Loading lenders...</option>
+                  ) : lenders.length === 0 ? (
+                    <option>No lenders available</option>
+                  ) : (
+                    lenders.map((l: any) => (
+                      <option key={l.lender_id} value={l.lender_id}>
+                        {l.name}
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
 
-              <div>
+              {/* LOAN AMOUNT */}
+              <div className="space-y-1">
                 <Label>Loan Amount (₹)</Label>
                 <Input
                   type="number"
@@ -141,11 +202,13 @@ const LoanApplication = () => {
                   name="amount"
                   value={form.amount}
                   onChange={handleChange}
+                  placeholder="Eg: 10000"
                   required
                 />
               </div>
 
-              <div>
+              {/* TENURE */}
+              <div className="space-y-1">
                 <Label>Tenure (Months)</Label>
                 <Input
                   type="number"
@@ -153,11 +216,13 @@ const LoanApplication = () => {
                   name="tenure_months"
                   value={form.tenure_months}
                   onChange={handleChange}
+                  placeholder="Eg: 6"
                   required
                 />
               </div>
 
-              <div>
+              {/* PURPOSE */}
+              <div className="space-y-1">
                 <Label>Purpose</Label>
                 <Input
                   type="text"
@@ -167,8 +232,13 @@ const LoanApplication = () => {
                   onChange={handleChange}
                   required
                 />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Interest rates will be in the range of{" "}
+                  <b>5% - 12%</b>.
+                </p>
               </div>
 
+              {/* SUBMIT BUTTON */}
               <Button type="submit" className="w-full">
                 Submit Application
               </Button>
@@ -184,3 +254,4 @@ const LoanApplication = () => {
 };
 
 export default LoanApplication;
+  

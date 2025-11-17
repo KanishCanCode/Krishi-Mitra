@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Wallet, Clock, FileText } from "lucide-react";
+import { Loader2, Wallet, Clock, FileText, User } from "lucide-react";
 
 const statusColors: any = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -99,6 +99,18 @@ const Loans = () => {
                 </CardHeader>
 
                 <CardContent className="space-y-4 text-sm">
+                  
+                  {/* LENDER DETAILS */}
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <p>
+                      <strong>Lender:</strong>{" "}
+                      {loan.lender?.name || (
+                        <span className="text-muted-foreground">Not Assigned</span>
+                      )}
+                    </p>
+                  </div>
+
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground" />
                     <p><strong>Purpose:</strong> {loan.purpose}</p>
@@ -117,12 +129,6 @@ const Loans = () => {
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => navigate(`/loan/${loan.application_id}`)}
-                    className="mt-4 w-full px-4 py-2 border rounded-lg hover:bg-gray-100"
-                  >
-                    View Details
-                  </button>
                 </CardContent>
               </Card>
             ))}

@@ -16,6 +16,7 @@ import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 import FarmerKYC from "./pages/FarmerKYC";
 import Loans from "./pages/Loans";
+import FarmerProfile from "./pages/FarmerProfile";
 
 import LenderDashboard from "./pages/LenderDashboard";   // ✅ ADDED
 
@@ -37,6 +38,8 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/farmer/kyc" element={<FarmerKYC />} />
           <Route path="/loans" element={<Loans />} />
+          <Route path="/farmer/profile" element={<FarmerProfile />} />
+
 
           {/* Lender */}
           <Route path="/lender/dashboard" element={<LenderDashboard />} />   {/* ✅ FIX */}

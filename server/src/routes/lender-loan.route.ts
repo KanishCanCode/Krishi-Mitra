@@ -111,24 +111,65 @@ router.post("/disburse", requireAuth(["lender"]), async (req, res) => {
     if (!application_id)
       return res.status(400).json({ success: false, error: "application_id required" });
 
-    const loan = await prisma.loan_Application.findUnique({ where: { application_id } });
+    // Find loan
+    const loan = await prisma.loan_Application.findUnique({
+      where: { application_id },
+    });
 
-    if (!loan) return res.status(404).json({ success: false, error: "Loan not found" });
+    if (!loan)
+      return res.status(404).json({ success: false, error: "Loan not found" });
+
     if (loan.lender_id !== lender_id)
       return res.status(403).json({ success: false, error: "Not authorized" });
 
-    const updated = await prisma.loan_Application.update({
+    if (loan.status !== "approved")
+      return res.status(400).json({
+        success: false,
+        error: "Only approved loans can be disbursed",
+      });
+
+    // Generate simple transaction hash
+    const transaction_hash = "txn_" + Math.random().toString(36).substring(2, 12);
+
+    // Insert into Disbursement table
+    const disbursement = await prisma.disbursement.create({
+      data: {
+        application_id,
+        lender_id,
+        amount: loan.amount,
+        status: "completed",
+        transaction_hash,
+      },
+    });
+
+    // Update loan status → disbursed
+    await prisma.loan_Application.update({
       where: { application_id },
       data: {
         status: "disbursed",
       },
     });
 
-    return res.json({ success: true, loan: updated });
+    // Increase lender total funded count
+    await prisma.lender.update({
+      where: { lender_id },
+      data: {
+        total_funded_loans: {
+          increment: 1,
+        },
+      },
+    });
+
+    return res.json({
+      success: true,
+      message: "Loan disbursed successfully",
+      disbursement,
+    });
   } catch (err) {
     console.error("Disburse Error:", err);
     return res.status(500).json({ success: false, error: "Server error" });
   }
 });
+
 
 export default router;

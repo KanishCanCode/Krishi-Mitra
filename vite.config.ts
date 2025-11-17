@@ -7,15 +7,23 @@ export default defineConfig({
     host: "::",
     port: 8080,
     proxy: {
-      "/auth/": {
+      "/auth": {
         target: "http://localhost:3001",
         changeOrigin: true,
       },
-      "/loan/": {
+      "/loan": {
         target: "http://localhost:3001",
         changeOrigin: true,
       },
-      "/kyc/": {
+      "/kyc": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
+      "/lender": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
+      "/farmer": {
         target: "http://localhost:3001",
         changeOrigin: true,
       },

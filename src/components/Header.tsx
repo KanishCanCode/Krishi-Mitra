@@ -4,18 +4,21 @@ import { Leaf, Menu, LogOut } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 
+
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // NEW AUTH LOGIC (based on your Auth.tsx)
+  // AUTH
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("userRole");
   const isAuthenticated = Boolean(token);
 
-  // NAV ITEMS
-  const userNavItems = [
+  // 🔥 ROLE-BASED NAV ITEMS
+
+  // FARMER NAV
+  const farmerNavItems = [
     { name: "Home", path: "/" },
     { name: "Dashboard", path: "/dashboard", protected: true, roles: ["farmer"] },
     { name: "Loans", path: "/loans", protected: true, roles: ["farmer"] },
@@ -23,15 +26,28 @@ const Header = () => {
     { name: "Help", path: "/help" },
   ];
 
+  // LENDER NAV
+  const lenderNavItems = [
+    { name: "Home", path: "/" },
+    { name: "Dashboard", path: "/lender/dashboard", protected: true, roles: ["lender"] },
+    { name: "Help", path: "/help" },
+  ];
+  
+
+  // ADMIN NAV
   const adminNavItems = [
     { name: "Home", path: "/" },
     { name: "Admin Panel", path: "/admin", protected: true, roles: ["admin"] },
     { name: "Help", path: "/help" },
   ];
 
-  const navItems = userRole === "admin" ? adminNavItems : userNavItems;
+  // SELECT NAV BASED ON ROLE
+  let navItems;
+  if (userRole === "admin") navItems = adminNavItems;
+  else if (userRole === "lender") navItems = lenderNavItems;
+  else navItems = farmerNavItems;
 
-  // LOGOUT UPDATED
+  // LOGOUT
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userRole");
@@ -63,11 +79,8 @@ const Header = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
           {navItems.map((item) => {
-            // Protected check
-            if (item.protected && !isAuthenticated) return null;
-
-            // Role check
-            if (item.roles && !item.roles.includes(userRole || "")) return null;
+            if (item.protected && !isAuthenticated) return null; // auth protected
+            if (item.roles && !item.roles.includes(userRole || "")) return null; // role protected
 
             return (
               <Link
@@ -90,9 +103,7 @@ const Header = () => {
               <Button variant="outline" onClick={() => navigate("/auth")}>
                 Login
               </Button>
-              <Button onClick={() => navigate("/auth")}>
-                Get Started
-              </Button>
+              <Button onClick={() => navigate("/auth")}>Get Started</Button>
             </>
           ) : (
             <Button variant="outline" onClick={handleLogout}>
@@ -134,9 +145,7 @@ const Header = () => {
                     <Button variant="outline" onClick={() => navigate("/auth")}>
                       Login
                     </Button>
-                    <Button onClick={() => navigate("/auth")}>
-                      Get Started
-                    </Button>
+                    <Button onClick={() => navigate("/auth")}>Get Started</Button>
                   </>
                 ) : (
                   <Button variant="outline" onClick={handleLogout}>
