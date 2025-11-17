@@ -1,4 +1,3 @@
-// server/src/routes/auth.route.ts
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -12,7 +11,7 @@ function signToken(role: "farmer" | "lender", id: string, email: string) {
 }
 
 /* ============================
-   FARMER ROUTES
+   FARMER AUTH ROUTES
    ============================ */
 
 router.post("/farmer/register", async (req, res) => {
@@ -81,8 +80,9 @@ router.post("/farmer/login", async (req, res) => {
   }
 });
 
+
 /* ============================
-   LENDER ROUTES
+   LENDER AUTH ROUTES
    ============================ */
 
 router.post("/lender/register", async (req, res) => {
@@ -141,12 +141,16 @@ router.post("/lender/login", async (req, res) => {
       role: "lender",
       token,
       lender,
-      redirect: "/lender/dashboard", // ✅ ALWAYS GO HERE AFTER LOGIN
+      redirect: "/lender/dashboard",
     });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ success: false, error: "Internal error" });
   }
 });
+
+
+
+
 
 export default router;

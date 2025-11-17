@@ -10,9 +10,9 @@ router.post("/apply", requireAuth(["farmer"]), async (req, res) => {
   try {
     const { lender_id, amount, tenure_months, purpose } = req.body;
 
-    const farmer_id = req.user!.id; // farmer_id from JWT
+    const farmer_id = req.user!.id;
 
-    // validate farmer and lender exist
+    // validate farmer and lender
     const [farmer, lender] = await Promise.all([
       prisma.farmer.findUnique({ where: { farmer_id } }),
       prisma.lender.findUnique({ where: { lender_id } }),
@@ -55,9 +55,19 @@ router.get("/me", requireAuth(["farmer"]), async (req, res) => {
     const loans = await prisma.loan_Application.findMany({
       where: { farmer_id },
       orderBy: { application_date: "desc" },
+      include: {
+        lender: {
+          select: {
+            lender_id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     return res.json({ success: true, loans });
+
   } catch (err) {
     console.error("Loan Fetch Error:", err);
     return res.status(500).json({ success: false, error: "Server error" });

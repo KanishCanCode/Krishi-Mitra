@@ -5,6 +5,8 @@ import loanRoute from "./routes/loan.route";
 import authRouter from "./routes/auth.route";
 import { requireAuth } from "./middleware/auth";
 import lenderLoanRoute from "./routes/lender-loan.route";
+import farmerRoutes from "./routes/farmer.route";
+import lenderRoutes from "./routes/lender.route"
 
 
 const app = express();
@@ -26,11 +28,14 @@ app.get("/", (req, res) => {
 app.use("/auth", authRouter);
 
 // PROTECTED FARMER ROUTES
+
+app.use("/farmer", farmerRoutes);
+
 app.use("/kyc", requireAuth(["farmer"]), kycRouter);
 app.use("/loan", requireAuth(["farmer"]), loanRoute);
 
 app.use("/lender/loan", requireAuth(["lender"]), lenderLoanRoute);
-
+app.use("/lender",lenderRoutes);
 
 // Start server
 app.listen(3001, () => console.log("Server running on 3001"));
