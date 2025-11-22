@@ -1,10 +1,10 @@
-## KrishiMitra: Blockchain-based Micro Loan Management System for Farmers
+## Kisan-Nidhi: Blockchain-based Micro Loan Management System for Farmers
 
 ## Overview:
 
-* KrishiMitra is a decentralized platform designed to simplify and secure the process of providing micro-loans to farmers.
+* Kisan-Nidhi is a decentralized platform designed to simplify and secure the process of providing micro-loans to farmers.
 * By leveraging blockchain technology, the system ensures transparency, immutability and trust between farmers, banks and lending institutions.
-* The goal of KrishiMitra is to reduce exploitation, eliminate middlemen and provide farmers with easier access to credit facilities.
+* The goal of Kisan-Nidhi is to reduce exploitation, eliminate middlemen and provide farmers with easier access to credit facilities.
 
 ## Key Features
 
