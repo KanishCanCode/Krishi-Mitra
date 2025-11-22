@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 142 71% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 142 71% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 142 71% 15%;
+
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 142 71% 40%;
+
+    --secondary: 213 94% 48%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 213 94% 43%;
+
+    --accent: 45 93% 58%;
+    --accent-foreground: 142 71% 15%;
+
+    --muted: 142 20% 96%;
+    --muted-foreground: 142 10% 45%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 142 20% 90%;
+    --input: 142 20% 90%;
+    --ring: 142 71% 45%;
+
+    --radius: 0.75rem;
+
+    --gradient-hero: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(213 94% 48%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(142 20% 98%) 100%);
+    
+    --shadow-soft: 0 4px 6px -1px hsl(142 71% 15% / 0.1), 0 2px 4px -2px hsl(142 71% 15% / 0.1);
+    --shadow-md: 0 10px 15px -3px hsl(142 71% 15% / 0.1), 0 4px 6px -4px hsl(142 71% 15% / 0.1);
+    --shadow-lg: 0 20px 25px -5px hsl(142 71% 15% / 0.1), 0 8px 10px -6px hsl(142 71% 15% / 0.1);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 142 71% 15%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 142 20% 96%;
+    --sidebar-accent-foreground: 142 71% 15%;
+    --sidebar-border: 142 20% 90%;
+    --sidebar-ring: 142 71% 45%;
+  }
+
+  .dark {
+    --background: 142 30% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 142 25% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 142 25% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 142 71% 55%;
+    --primary-foreground: 142 71% 10%;
+    --primary-hover: 142 71% 50%;
+
+    --secondary: 213 94% 58%;
+    --secondary-foreground: 0 0% 98%;
+    --secondary-hover: 213 94% 53%;
+
+    --accent: 45 93% 68%;
+    --accent-foreground: 142 71% 10%;
+
+    --muted: 142 15% 20%;
+    --muted-foreground: 142 10% 70%;
+
+    --destructive: 0 84% 70%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 142 15% 25%;
+    --input: 142 15% 25%;
+    --ring: 142 71% 55%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(142 71% 25%) 0%, hsl(213 94% 28%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(142 25% 12%) 0%, hsl(142 20% 15%) 100%);
+
+    --sidebar-background: 142 25% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 142 71% 55%;
+    --sidebar-primary-foreground: 142 71% 10%;
+    --sidebar-accent: 142 15% 20%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 142 15% 25%;
+    --sidebar-ring: 142 71% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
