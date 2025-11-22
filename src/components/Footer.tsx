@@ -11,7 +11,7 @@ const Footer = () => {
             <Link to="/" className="flex items-center gap-2 font-bold text-xl">
               <Leaf className="h-6 w-6 text-primary" />
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Krishi Mitra
+                Kisan-Nidhi
               </span>
             </Link>
             <p className="text-sm text-muted-foreground">
@@ -87,7 +87,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 Krishi Mitra. All rights reserved. Built with blockchain technology.</p>
+          <p>&copy; 2025 Kisan-Nidhi All rights reserved. Built with blockchain technology.</p>
         </div>
       </div>
     </footer>
