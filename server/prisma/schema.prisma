@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Farmer {
@@ -69,12 +68,12 @@ model KYC_Details {
 }
 
 model Collateral_Document {
-  document_id    String           @id @default(cuid())
+  document_id    String @id @default(cuid())
   application_id String
   document_type  String
-  
-  upload_date    DateTime         @default(now())
-  application    Loan_Application @relation(fields: [application_id], references: [application_id])
+
+  upload_date DateTime         @default(now())
+  application Loan_Application @relation(fields: [application_id], references: [application_id])
 }
 
 model Repayment {
